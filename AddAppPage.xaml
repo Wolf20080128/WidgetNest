@@ -1,0 +1,156 @@
+﻿<UserControl x:Class="WidgetNest.AddAppPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:WidgetNest"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignWidth="370" d:DesignHeight="190">
+
+    <UserControl.Resources>
+        <!-- 顶部导航栏 Tab 样式：两个按钮平分宽度，选中显示底部指示条 -->
+        <Style x:Key="NavTabButton" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="TabBorder"
+                                Background="Transparent"
+                                Padding="0,9"
+                                BorderThickness="0,0,0,2"
+                                BorderBrush="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="{DynamicResource TextSecondary}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- 整个页面都接受拖放：拖到虚线框以外也能导入，拖到市场页同样有效 -->
+    <Grid AllowDrop="True"
+          DragOver="DropZone_DragOver"
+          DragLeave="DropZone_DragLeave"
+          Drop="DropZone_Drop">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- 导航栏 -->
+            <RowDefinition Height="*" />
+            <!-- 子页面内容 -->
+        </Grid.RowDefinitions>
+
+        <!-- ===== 顶部导航栏 ===== -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 底部分隔线（位于按钮下层） -->
+            <Border Grid.ColumnSpan="2"
+                    Height="1"
+                    VerticalAlignment="Bottom"
+                    Background="{DynamicResource Divider}" />
+
+            <RadioButton x:Name="CustomComponentsTab"
+                         Grid.Column="0"
+                         Content="自定义组件"
+                         Style="{StaticResource NavTabButton}"
+                         Checked="CustomComponentsTab_Checked" />
+
+            <RadioButton x:Name="MarketTab"
+                         Grid.Column="1"
+                         Content="小组件市场"
+                         Style="{StaticResource NavTabButton}"
+                         Checked="MarketTab_Checked" />
+        </Grid>
+
+        <!-- ===== 自定义组件页 ===== -->
+        <Grid x:Name="CustomComponentsPage"
+              Grid.Row="1"
+              Visibility="Collapsed"
+              Margin="0,10,0,2">
+
+            <!-- 虚线添加框 -->
+            <Rectangle x:Name="DropZone"
+                       Margin="1"
+                       Stroke="{DynamicResource BorderStrong}"
+                       StrokeThickness="1"
+                       StrokeDashArray="4 3"
+                       RadiusX="8"
+                       RadiusY="8"
+                       Fill="Transparent"
+                       AllowDrop="True"
+                       DragOver="DropZone_DragOver"
+                       DragLeave="DropZone_DragLeave"
+                       Drop="DropZone_Drop" />
+
+            <!-- 框内提示内容：加号 + 说明文字 -->
+            <StackPanel x:Name="DropHint"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="0,-6,0,0"
+                        IsHitTestVisible="False">
+                <Path Data="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                      Fill="{DynamicResource TextSecondary}"
+                      Width="26" Height="26"
+                      Stretch="Uniform"
+                      HorizontalAlignment="Center" />
+                <TextBlock Text="拖入此处快捷添加"
+                           Foreground="{DynamicResource TextTertiary}"
+                           FontSize="11"
+                           Margin="0,8,0,0"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="应用快捷方式，或自己写的 .json 组件包"
+                           Foreground="{DynamicResource TextFaint}"
+                           FontSize="8.5"
+                           Margin="0,3,0,0"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- 导入结果 / 出错原因 -->
+            <TextBlock x:Name="DropStatus"
+                       FontSize="9"
+                       Foreground="{DynamicResource TextTertiary}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       MaxWidth="330"
+                       Margin="12,10,12,0"
+                       Visibility="Collapsed" />
+
+            <!-- 组件开发说明入口 -->
+            <TextBlock x:Name="DevLink"
+                       Text="组件开发说明与示例"
+                       FontSize="9"
+                       Foreground="{DynamicResource AccentText}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,0,8"
+                       Cursor="Hand"
+                       MouseLeftButtonUp="DevLink_Click"
+                       ToolTip="打开 widget-samples 目录" />
+        </Grid>
+
+        <!-- ===== 小组件市场页 ===== -->
+        <Grid x:Name="MarketPage"
+              Grid.Row="1"
+              Visibility="Collapsed">
+            <local:WidgetMarketView x:Name="MarketView" />
+        </Grid>
+    </Grid>
+</UserControl>

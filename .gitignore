@@ -1,0 +1,27 @@
+# ---- .NET 构建产物 ----
+[Bb]in/
+[Oo]bj/
+[Pp]ublish/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ---- 工具链目录（WorkBuddy 项目数据，不属于源码） ----
+.workbuddy/
+
+# ---- Visual Studio / Rider / VS Code ----
+.vs/
+.idea/
+*.DotSettings.user
+*.VC.db
+*.VC.VC.opendb
+
+# ---- 打包产物（Inno Setup 输出到 publish/，已忽略；这里兜底） ----
+*.exe.bak
+Output/
+Setup/
+
+# ---- 运行期数据（账号、偏好、组件缓存） ----
+# 正式运行时写入 %LOCALAPPDATA%\WidgetNest，仓库内不应出现
+*.log

@@ -1,0 +1,425 @@
+﻿<Window x:Class="WidgetNest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WidgetNest"
+        Title="WidgetNest"
+        Width="400" Height="260"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        WindowStartupLocation="Manual">
+
+    <Window.Resources>
+        <!-- 底栏正方形按钮样式 -->
+        <Style x:Key="BottomBarButton" TargetType="Button">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Divider}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BorderSubtle}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 底栏文字按钮（取消 / 组合 / 删除） -->
+        <Style x:Key="BarTextButton" TargetType="Button">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Divider}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BorderSubtle}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 底栏/浮层的危险按钮（删除）：红色调，悬停也保持红色 -->
+        <Style x:Key="BarDangerButton" TargetType="Button">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource Danger}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource DangerSoft}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource DangerSoft}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 底栏开关按钮（编辑）：选中态保持高亮 -->
+        <Style x:Key="BottomBarToggle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Divider}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BorderSubtle}" />
+                            </Trigger>
+                            <!-- 放在最后：编辑态高亮优先于悬停高亮 -->
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentSoft}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 菜单选项按钮样式 -->
+        <Style x:Key="MenuItemButton" TargetType="Button">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6" Margin="4,2">
+                            <ContentPresenter HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Center"
+                                              Margin="10,0" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Divider}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BorderSubtle}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="{DynamicResource PanelBackground}"
+            BorderBrush="{DynamicResource BorderSubtle}"
+            BorderThickness="1"
+            CornerRadius="10">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="18" ShadowDepth="2" Opacity="0.55" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <!-- 主体区 -->
+                <RowDefinition Height="48" />
+                <!-- 底栏 -->
+            </Grid.RowDefinitions>
+
+            <!-- ===== 主体区 ===== -->
+            <Grid Grid.Row="0" Margin="14,14,14,6">
+                <Grid x:Name="DefaultPage">
+                    <local:HomePage x:Name="HomeView" />
+                </Grid>
+
+                <ContentControl x:Name="FeatureContent"
+                                Visibility="Visible"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+            </Grid>
+
+            <!-- ===== 底栏 ===== -->
+            <Border Grid.Row="1"
+                    BorderThickness="0,1,0,0"
+                    BorderBrush="{DynamicResource Divider}">
+                <Grid Margin="8,0">
+
+                    <!-- ===== 常规底栏：主页 | 编辑 · 更多 ===== -->
+                    <Grid x:Name="NormalBar">
+                        <Button x:Name="HomeButton"
+                                Style="{StaticResource BottomBarButton}"
+                                HorizontalAlignment="Left"
+                                ToolTip="主页"
+                                Click="HomeButton_Click">
+                            <Path Data="M12,3 L2.5,11 L4.5,11 L4.5,20 L9.5,20 L9.5,14 L14.5,14 L14.5,20 L19.5,20 L19.5,11 L21.5,11 Z"
+                                  Fill="{DynamicResource TextSecondary}"
+                                  Stretch="Uniform"
+                                  Width="16" Height="16" />
+                        </Button>
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <ToggleButton x:Name="EditButton"
+                                          Style="{StaticResource BottomBarToggle}"
+                                          ToolTip="编辑图标"
+                                          Click="EditButton_Click">
+                                <Path Data="M3,17.25 V21 H6.75 L17.81,9.94 L14.06,6.19 Z M20.71,7.04 C21.1,6.65 21.1,6.02 20.71,5.63 L18.37,3.29 C17.98,2.9 17.35,2.9 16.96,3.29 L15.13,5.12 L18.88,8.87 Z"
+                                      Fill="{DynamicResource TextSecondary}"
+                                      Stretch="Uniform"
+                                      Width="15" Height="15" />
+                            </ToggleButton>
+
+                            <Button x:Name="MoreButton"
+                                    Style="{StaticResource BottomBarButton}"
+                                    ToolTip="更多"
+                                    Margin="2,0,0,0"
+                                    Click="MoreButton_Click">
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                    <Ellipse Width="4" Height="4" Fill="{DynamicResource TextSecondary}" Margin="1,0" />
+                                    <Ellipse Width="4" Height="4" Fill="{DynamicResource TextSecondary}" Margin="1,0" />
+                                    <Ellipse Width="4" Height="4" Fill="{DynamicResource TextSecondary}" Margin="1,0" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- ===== 选中底栏：取消 | 组合 · 删除 ===== -->
+                    <Grid x:Name="SelectionBar" Visibility="Collapsed">
+                        <Button x:Name="CancelButton"
+                                Style="{StaticResource BarTextButton}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="取消"
+                                Click="CancelButton_Click" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <!-- 组合 / 拆分：只有选中两个相邻小组件时才出现 -->
+                            <Button x:Name="CombineButton"
+                                    Style="{StaticResource BarTextButton}"
+                                    Visibility="Collapsed"
+                                    Click="CombineButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path x:Name="CombineIcon"
+                                          Data="M17,20.41 L18.41,19 L15,15.59 L13.59,17 Z M7.5,8 H11 V13.59 L5.59,19 L7,20.41 L13,14.41 V8 H16.5 L12,3.5 Z"
+                                          Fill="{DynamicResource TextSecondary}"
+                                          Stretch="Uniform"
+                                          Width="13" Height="13"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock x:Name="CombineText" Text="组合" Margin="4,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="DeleteButton"
+                                    Style="{StaticResource BarDangerButton}"
+                                    Margin="2,0,0,0"
+                                    Click="DeleteButton_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="M6,19 C6,20.1 6.9,21 8,21 H16 C17.1,21 18,20.1 18,19 V7 H6 Z M19,4 H15.5 L14.5,3 H9.5 L8.5,4 H5 V6 H19 Z"
+                                          Fill="{DynamicResource Danger}"
+                                          Stretch="Uniform"
+                                          Width="13" Height="13"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="删除" Margin="4,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                </Grid>
+            </Border>
+
+            <!-- ===== 更多菜单（浮在主体区上方）===== -->
+            <Border x:Name="MoreMenu"
+                    Grid.RowSpan="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,8,56"
+                    Width="36" Height="0"
+                    Visibility="Collapsed"
+                    ClipToBounds="True"
+                    Background="{DynamicResource MenuBackground}"
+                    BorderBrush="{DynamicResource BorderSubtle}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+
+                <StackPanel x:Name="MoreMenuItems"
+                            Width="150"
+                            HorizontalAlignment="Right"
+                            Margin="0,6,8,6">
+
+                    <!-- 我的主页（账号页，不是回主页） -->
+                    <Button Style="{StaticResource MenuItemButton}" Click="MenuProfile_Click">
+                        <Grid>
+                            <TextBlock Text="我的主页"
+                                       Foreground="{DynamicResource TextPrimary}" FontSize="13"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left" />
+                            <Path Data="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z"
+                                  Fill="{DynamicResource TextSecondary}"
+                                  Width="15" Height="15"
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+
+                    <!-- 偏好设置 -->
+                    <Button Style="{StaticResource MenuItemButton}" Click="MenuPreferences_Click">
+                        <Grid>
+                            <TextBlock Text="偏好设置"
+                                       Foreground="{DynamicResource TextPrimary}" FontSize="13"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left" />
+                            <Path Data="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.84,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z"
+                                  Fill="{DynamicResource TextSecondary}"
+                                  Width="15" Height="15"
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+
+                    <!-- 添加应用 -->
+                    <Button Style="{StaticResource MenuItemButton}" Click="MenuAddApp_Click">
+                        <Grid>
+                            <TextBlock Text="添加应用"
+                                       Foreground="{DynamicResource TextPrimary}" FontSize="13"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left" />
+                            <Path Data="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                                  Fill="{DynamicResource TextSecondary}"
+                                  Width="15" Height="15"
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- ===== 删除确认浮层（显示在上半区域）===== -->
+            <Grid x:Name="ConfirmOverlay"
+                  Grid.RowSpan="2"
+                  Panel.ZIndex="20"
+                  Visibility="Collapsed"
+                  Opacity="0">
+
+                <!-- 遮罩：圆角与外框一致，避免盖住面板圆角 -->
+                <Border Background="{DynamicResource Scrim}"
+                        CornerRadius="10"
+                        MouseLeftButtonDown="ConfirmScrim_Click" />
+
+                <Border x:Name="ConfirmCard"
+                        Width="312"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Margin="0,16,0,0"
+                        Background="{DynamicResource PopupBackground}"
+                        BorderBrush="{DynamicResource BorderSubtle}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="16,12,16,10">
+                    <Border.RenderTransform>
+                        <TranslateTransform x:Name="ConfirmCardOffset" Y="-12" />
+                    </Border.RenderTransform>
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="16" ShadowDepth="2" Opacity="0.5" />
+                    </Border.Effect>
+
+                    <StackPanel>
+                        <TextBlock x:Name="ConfirmTitle"
+                                   Text="删除选中的图标？"
+                                   Foreground="{DynamicResource TextPrimary}"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock x:Name="ConfirmMessage"
+                                   Text="只会从面板移除，不会删除原始文件。"
+                                   Foreground="{DynamicResource TextSecondary}"
+                                   FontSize="11"
+                                   Margin="0,5,0,0"
+                                   TextWrapping="Wrap" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,8,0,0">
+                            <Button Style="{StaticResource BarTextButton}"
+                                    Content="取消"
+                                    Click="CancelDelete_Click" />
+
+                            <Button Style="{StaticResource BarDangerButton}"
+                                    Margin="6,0,0,0"
+                                    Click="ConfirmDelete_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="M6,19 C6,20.1 6.9,21 8,21 H16 C17.1,21 18,20.1 18,19 V7 H6 Z M19,4 H15.5 L14.5,3 H9.5 L8.5,4 H5 V6 H19 Z"
+                                          Fill="{DynamicResource Danger}"
+                                          Stretch="Uniform"
+                                          Width="13" Height="13"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="删除" Margin="4,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

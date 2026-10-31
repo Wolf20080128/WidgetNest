@@ -1,0 +1,611 @@
+﻿<UserControl x:Class="WidgetNest.ProfilePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignWidth="370" d:DesignHeight="190">
+
+    <UserControl.Resources>
+        <!-- 输入框：圆角 + 占位文字（Tag） -->
+        <Style x:Key="FieldBox" TargetType="TextBox">
+            <Setter Property="Height" Value="28" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="SelectionBrush" Value="#804C8DFF" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceSubtle}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              Margin="8,0"
+                                              VerticalAlignment="Center"
+                                              Focusable="False"
+                                              HorizontalScrollBarVisibility="Hidden"
+                                              VerticalScrollBarVisibility="Hidden" />
+                                <TextBlock x:Name="Ph"
+                                           Text="{TemplateBinding Tag}"
+                                           Foreground="{DynamicResource TextFaint}"
+                                           FontSize="11"
+                                           Margin="9,0"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value="" />
+                                    <Condition Property="IsKeyboardFocused" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Ph" Property="Visibility" Value="Visible" />
+                            </MultiTrigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#804C8DFF" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceInset}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 密码框：与输入框同款（占位文字在模板外，由代码控制） -->
+        <Style x:Key="FieldPassword" TargetType="PasswordBox">
+            <Setter Property="Height" Value="28" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="SelectionBrush" Value="#804C8DFF" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceSubtle}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtle}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="8,0"
+                                          VerticalAlignment="Center"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#804C8DFF" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceInset}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 个性签名：无边框，点一下就能编辑 -->
+        <Style x:Key="SignatureField" TargetType="TextBox">
+            <Setter Property="Height" Value="20" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="SelectionBrush" Value="#804C8DFF" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="4,0"
+                                Margin="-4,0">
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              VerticalAlignment="Center"
+                                              Focusable="False"
+                                              HorizontalScrollBarVisibility="Hidden"
+                                              VerticalScrollBarVisibility="Hidden" />
+                                <TextBlock x:Name="Ph"
+                                           Text="{TemplateBinding Tag}"
+                                           Foreground="{DynamicResource TextFaint}"
+                                           FontSize="11"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value="" />
+                                    <Condition Property="IsKeyboardFocused" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Ph" Property="Visibility" Value="Visible" />
+                            </MultiTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceSubtle}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceInset}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 昵称行内编辑框 -->
+        <Style x:Key="NameField" TargetType="TextBox">
+            <Setter Property="Height" Value="22" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="SelectionBrush" Value="#804C8DFF" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceInset}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="4,0"
+                                Margin="-4,0">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          VerticalAlignment="Center"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 主按钮 -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Background" Value="{DynamicResource Accent}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentHover}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentPressed}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceActive}" />
+                                <Setter Property="Foreground" Value="{DynamicResource TextTertiary}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 次要按钮：描边 -->
+        <Style x:Key="GhostButton" TargetType="Button">
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{DynamicResource BorderSubtle}"
+                                BorderThickness="1"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Divider}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TextFaint}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BorderSubtle}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 文字按钮 -->
+        <Style x:Key="LinkButton" TargetType="Button">
+            <Setter Property="Height" Value="22" />
+            <Setter Property="Padding" Value="6,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SurfaceSubtle}" />
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 返回箭头 -->
+        <Style x:Key="BackButton" TargetType="Button">
+            <Setter Property="Width" Value="22" />
+            <Setter Property="Height" Value="22" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Divider}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid ClipToBounds="True">
+
+        <!-- ===== 未登录 ===== -->
+        <Grid x:Name="GuestView">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid Width="54" Height="54" HorizontalAlignment="Center">
+                    <Ellipse Fill="{DynamicResource SurfaceSubtle}" Stroke="{DynamicResource BorderSubtle}" StrokeThickness="1" />
+                    <Path Data="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z"
+                          Fill="{DynamicResource TextTertiary}"
+                          Stretch="Uniform"
+                          Width="26" Height="26"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+                </Grid>
+
+                <TextBlock Text="还没有登录"
+                           Foreground="{DynamicResource TextPrimary}"
+                           FontSize="13"
+                           Margin="0,10,0,0"
+                           HorizontalAlignment="Center" />
+
+                <TextBlock x:Name="GuestHint"
+                           Text="数据只保存在本机，不会上传"
+                           Foreground="{DynamicResource TextTertiary}"
+                           FontSize="10.5"
+                           Margin="0,5,0,0"
+                           HorizontalAlignment="Center" />
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,12,0,0">
+                    <Button x:Name="GuestLoginButton"
+                            Style="{StaticResource PrimaryButton}"
+                            Content="登录"
+                            Width="88"
+                            Click="GuestLogin_Click" />
+                    <Button x:Name="GuestRegisterButton"
+                            Style="{StaticResource GhostButton}"
+                            Content="注册"
+                            Width="88"
+                            Margin="8,0,0,0"
+                            Click="GuestRegister_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- ===== 登录 / 注册表单 ===== -->
+        <Grid x:Name="AuthView" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Height="22">
+                <Button Style="{StaticResource BackButton}"
+                        HorizontalAlignment="Left"
+                        ToolTip="返回"
+                        Click="Back_Click">
+                    <Path Data="M15.41,7.41 L14,6 L8,12 L14,18 L15.41,16.59 L10.83,12 Z"
+                          Fill="{DynamicResource TextSecondary}"
+                          Stretch="Uniform"
+                          Width="14" Height="14" />
+                </Button>
+
+                <TextBlock x:Name="AuthTitle"
+                           Text="登录"
+                           Foreground="{DynamicResource TextSecondary}"
+                           FontSize="12"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,6,0,0">
+
+                <!-- 登录表单 -->
+                <StackPanel x:Name="LoginForm" VerticalAlignment="Top">
+                    <TextBox x:Name="LoginId"
+                             Style="{StaticResource FieldBox}"
+                             Tag="邮箱或昵称"
+                             MaxLength="80"
+                             KeyDown="Field_KeyDown" />
+
+                    <Grid Margin="0,6,0,0">
+                        <PasswordBox x:Name="LoginPassword"
+                                     Style="{StaticResource FieldPassword}"
+                                     MaxLength="64"
+                                     KeyDown="Field_KeyDown" />
+
+                        <TextBlock x:Name="LoginPasswordHint"
+                                   Text="密码"
+                                   Foreground="{DynamicResource TextFaint}"
+                                   FontSize="11"
+                                   Margin="9,0"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False" />
+                    </Grid>
+
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="登录"
+                            Margin="0,8,0,0"
+                            Click="Login_Click" />
+
+                    <Grid Height="16" Margin="0,2,0,0">
+                        <TextBlock x:Name="LoginError"
+                                   Foreground="{DynamicResource Danger}"
+                                   FontSize="10.5"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <Button x:Name="GoRegisterButton"
+                                Style="{StaticResource LinkButton}"
+                                Content="没有账号？注册"
+                                HorizontalAlignment="Right"
+                                Click="GoRegister_Click" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- 注册表单 -->
+                <StackPanel x:Name="RegisterForm" VerticalAlignment="Top" Visibility="Collapsed">
+                    <TextBox x:Name="RegisterEmail"
+                             Style="{StaticResource FieldBox}"
+                             Tag="邮箱"
+                             MaxLength="80"
+                             KeyDown="Field_KeyDown" />
+
+                    <TextBox x:Name="RegisterNickname"
+                             Style="{StaticResource FieldBox}"
+                             Tag="昵称（2–16 个字符）"
+                             Margin="0,6,0,0"
+                             MaxLength="16"
+                             KeyDown="Field_KeyDown" />
+
+                    <Grid Margin="0,6,0,0">
+                        <PasswordBox x:Name="RegisterPassword"
+                                     Style="{StaticResource FieldPassword}"
+                                     MaxLength="64"
+                                     KeyDown="Field_KeyDown" />
+
+                        <TextBlock x:Name="RegisterPasswordHint"
+                                   Text="密码（至少 6 位）"
+                                   Foreground="{DynamicResource TextFaint}"
+                                   FontSize="11"
+                                   Margin="9,0"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False" />
+                    </Grid>
+
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="注册"
+                            Margin="0,8,0,0"
+                            Click="Register_Click" />
+
+                    <TextBlock x:Name="RegisterError"
+                               Foreground="{DynamicResource Danger}"
+                               FontSize="10.5"
+                               Height="16"
+                               Margin="0,2,0,0"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- ===== 已登录：账号资料 ===== -->
+        <Grid x:Name="ProfileView" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 头像 + 昵称 + 等级 + 个性签名 -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid x:Name="AvatarHost"
+                      Width="54" Height="54"
+                      Cursor="Hand"
+                      ToolTip="点击更换头像"
+                      MouseLeftButtonUp="Avatar_Click">
+                    <Ellipse x:Name="AvatarCircle"
+                             Stroke="{DynamicResource BorderSubtle}"
+                             StrokeThickness="1" />
+
+                    <TextBlock x:Name="AvatarInitial"
+                               FontSize="21"
+                               FontWeight="SemiBold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+
+                    <!-- 悬停时显示的相机遮罩 -->
+                    <Border CornerRadius="27"
+                            Background="#8C000000"
+                            IsHitTestVisible="False">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Opacity" Value="0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Grid}}"
+                                                 Value="True">
+                                        <Setter Property="Opacity" Value="1" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <Path Data="M20,5 h-3.17 L15,3 H9 L7.17,5 H4 C2.9,5 2,5.9 2,7 v12 c0,1.1 0.9,2 2,2 h16 c1.1,0 2,-0.9 2,-2 V7 C22,5.9 21.1,5 20,5 Z M12,17 c-2.76,0 -5,-2.24 -5,-5 s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5 Z M12,9 c-1.66,0 -3,1.34 -3,3 s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3 Z"
+                              Fill="{DynamicResource TextPrimary}"
+                              Width="17" Height="17"
+                              Stretch="Uniform"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center" />
+                    </Border>
+                </Grid>
+
+                <StackPanel Grid.Column="1"
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid VerticalAlignment="Center">
+                            <TextBlock x:Name="NameText"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimary}"
+                                       MaxWidth="168"
+                                       TextTrimming="CharacterEllipsis"
+                                       Cursor="Hand"
+                                       ToolTip="点击修改昵称"
+                                       MouseLeftButtonUp="NameText_Click" />
+
+                            <TextBox x:Name="NameEdit"
+                                     Style="{StaticResource NameField}"
+                                     Width="150"
+                                     MaxLength="16"
+                                     Visibility="Collapsed"
+                                     KeyDown="NameEdit_KeyDown"
+                                     LostFocus="NameEdit_LostFocus" />
+                        </Grid>
+
+                        <Border Background="{DynamicResource AccentSoft}"
+                                CornerRadius="4"
+                                Padding="5,1"
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center">
+                            <TextBlock x:Name="LevelText"
+                                       Text="Lv.1"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource AccentText}" />
+                        </Border>
+                    </StackPanel>
+
+                    <TextBox x:Name="SignatureBox"
+                             Style="{StaticResource SignatureField}"
+                             Tag="点击写下个性签名…"
+                             MaxLength="40"
+                             Margin="0,6,0,0"
+                             LostFocus="SignatureBox_LostFocus"
+                             KeyDown="SignatureBox_KeyDown" />
+
+                    <TextBlock x:Name="NameError"
+                               Foreground="{DynamicResource Danger}"
+                               FontSize="10"
+                               Margin="0,2,0,0"
+                               TextTrimming="CharacterEllipsis"
+                               Visibility="Collapsed" />
+                </StackPanel>
+            </Grid>
+
+            <!-- 签到 -->
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <Button x:Name="SignInButton"
+                        Style="{StaticResource PrimaryButton}"
+                        Height="34"
+                        Click="SignIn_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Path x:Name="SignInIcon"
+                              Data="M19,3h-1V1h-2v2H8V1H6v2H5C3.89,3 3,3.9 3,5v14c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2V5C21,3.9 20.1,3 19,3zM19,19H5V8h14V19zM10.56,17.06 L6.5,13 L7.56,11.94 L10.56,14.94 L16.44,9.06 L17.5,10.12 Z"
+                              Fill="White"
+                              Width="14" Height="14"
+                              Stretch="Uniform"
+                              VerticalAlignment="Center" />
+                        <TextBlock x:Name="SignInText"
+                                   Text="签到"
+                                   Margin="6,0,0,0"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <TextBlock x:Name="SignInHint"
+                           Text="每天签到 +10 经验"
+                           Foreground="{DynamicResource TextTertiary}"
+                           FontSize="10"
+                           HorizontalAlignment="Center"
+                           Margin="0,5,0,0" />
+            </StackPanel>
+
+            <!-- 经验 + 退出登录 -->
+            <Grid Grid.Row="2">
+                <TextBlock x:Name="ExpText"
+                           Text="经验 0 / 100"
+                           Foreground="{DynamicResource TextTertiary}"
+                           FontSize="10"
+                           VerticalAlignment="Center" />
+
+                <Button Style="{StaticResource LinkButton}"
+                        Content="退出登录"
+                        HorizontalAlignment="Right"
+                        Click="Logout_Click" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

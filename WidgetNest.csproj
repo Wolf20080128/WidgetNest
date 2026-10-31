@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!-- 托盘图标用 WinForms 的 NotifyIcon -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>WidgetNest</AssemblyName>
+    <RootNamespace>WidgetNest</RootNamespace>
+
+    <!-- 可执行文件图标（资源管理器、任务栏、开始菜单快捷方式都读取它） -->
+    <ApplicationIcon>app.ico</ApplicationIcon>
+
+    <!-- 版本与产品信息（安装包、属性页读取这里） -->
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyTitle>WidgetNest 桌面组件面板</AssemblyTitle>
+    <Product>WidgetNest</Product>
+    <Company>WidgetNest</Company>
+    <Description>右下角随手唤出的桌面小组件面板</Description>
+    <Copyright>Copyright © 2026 WidgetNest</Copyright>
+
+    <!--
+      tools/ 下是独立小工具（图标生成器等），各有自己的 obj/bin。
+      默认 glob 只排除根目录的 obj/bin，扫不到子目录，会把别人的 AssemblyInfo 一起编进来
+      从而触发 CS0579，这里显式排除。
+    -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);tools\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <!--
+    UseWindowsForms 会隐式引入 System.Windows.Forms / System.Drawing，
+    导致 Application、Point、MessageBox、Color 等与 WPF 同名类型冲突。
+    这里移除，需要时用别名或完整名称引用。
+  -->
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 亮度 / CPU 温度等走 WMI（root\WMI），.NET 里没有内置 WMI 客户端 -->
+    <PackageReference Include="System.Management" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 省 / 市 / 区县三级数据（含坐标），随程序一起打包 -->
+    <EmbeddedResource Include="ChinaRegions.json" LogicalName="WidgetNest.ChinaRegions.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AddAppPage.xaml.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+  </ItemGroup>
+
+</Project>

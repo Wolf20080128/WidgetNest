@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="WidgetNest.WidgetMarketView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignWidth="370" d:DesignHeight="150">
+
+    <Grid Margin="0,4,0,2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 操作提示 + 数量：只占一行小字，给网格留出 3 行的高度 -->
+        <Grid Grid.Row="0" Margin="1,0,1,4">
+            <TextBlock Text="点选组件后再选大小"
+                       FontSize="8.5"
+                       Foreground="{DynamicResource TextFaint}"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center" />
+
+            <TextBlock x:Name="CountText"
+                       FontSize="8.5"
+                       Foreground="{DynamicResource TextFaint}"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- 6 列网格：一屏 3 行，组件多了往下滚 -->
+        <ScrollViewer x:Name="Scroller"
+                      Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="0,0,3,0"
+                      Focusable="False">
+            <UniformGrid x:Name="TileGrid" Columns="6" />
+        </ScrollViewer>
+    </Grid>
+</UserControl>
