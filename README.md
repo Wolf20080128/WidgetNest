@@ -50,7 +50,7 @@ WidgetNest 是一个常驻托盘的 Windows 桌面小组件面板。按 `Ctrl + 
 - 数据源支持 `static` / `clock` / `command` / `file`，命令在后台线程跑，有超时保护，取不到值显示 `—`
 - 版式支持文本、进度条、图标、横向分栏、占位空白；文本可插占位符，`{time}` `{date}` `{weekday}` 等内置
 - 组件市场按拼音搜索，每种组件支持多档尺寸
-- 详见 [自定义组件开发说明](docs/widget-extension.md)
+- 详见 [**自定义组件接口文档**](docs/widget-extension.md)；想用 C# 写内置组件，见 [**内置组件开发接口**](docs/widget-api.md)
 
 **程序本身**
 
@@ -94,6 +94,17 @@ ISCC.exe installer\WidgetNest.iss
 
 ---
 
+## 开发文档
+
+| 文档 | 适合谁 | 讲什么 |
+|---|---|---|
+| [自定义组件接口](docs/widget-extension.md) | 不写代码 | `widget.json` 全字段参考：尺寸、数据源、版式节点、颜色、内置图标、占位符、导入校验规则 |
+| [内置组件开发接口](docs/widget-api.md) | 改 C# | 注册 `WidgetDef` → 接 `WidgetFactory` → 写 `WidgetView`；`WidgetBox` 版式判断、`W` 视觉工具、`SystemMetrics` 取数、持久化与常见坑 |
+
+两条路线怎么选：能用「一条命令 / 一个文件 / 当前时间」拼出来的，写 JSON 就够；需要自己取系统指标、自己画界面的，加 C# 内置组件。文档索引见 [docs/](docs/README.md)。
+
+---
+
 ## 目录结构
 
 ```
@@ -106,10 +117,11 @@ WidgetNest/
 ├─ PreferencesPage          偏好设置
 ├─ ProfilePage              本机账号与签到
 ├─ LocationWindow           省市区三级定位选择
-├─ WidgetCatalog.cs         内置组件清单与默认版式
-├─ WidgetViews.cs           各类组件的渲染与实时取值
-├─ WidgetRuntime.cs         自定义组件的 JSON 解析、数据源调度
-├─ WidgetExtensions.cs      组件导入 / 导出 / 内置示例
+├─ WidgetCatalog.cs         内置组件清单、图标库、市场分家族
+├─ WidgetViews.cs           内置组件的视图 + WidgetFactory 工厂
+├─ WidgetRuntime.cs         WidgetView 基类、刷新调度、通用视觉工具 W
+├─ WidgetExtensions.cs      widget.json 解析 / 导入 / 内置示例
+├─ UserWidgetView.cs        自定义组件的渲染器（按清单现画）
 ├─ WidgetBoards.cs          待办、日程等看板型组件
 ├─ WidgetDataStore.cs       组件数据落盘
 ├─ SystemMetrics.cs         WMI / 性能计数器取硬件数据
@@ -117,7 +129,7 @@ WidgetNest/
 ├─ Theme.xaml, ThemeManager.cs
 ├─ installer/               Inno Setup 脚本
 ├─ tools/IconGen            图标生成小工具（独立项目）
-└─ docs/widget-extension.md 自定义组件开发说明
+└─ docs/                    接口文档：widget-extension.md（JSON）/ widget-api.md（C#）
 ```
 
 ---
@@ -133,8 +145,9 @@ WidgetNest/
 欢迎提 Issue 和 PR。
 
 - Bug / 功能建议请开 Issue，附上系统版本和复现步骤
-- 提交 PR 前请确认 `dotnet build -c Release` 能过
-- 新增自定义组件的字段请同步更新 `docs/widget-extension.md`
+- 提交 PR 前请确认 `dotnet build -c Release` 能过，并在浅色 / 深色主题、1×1 / 1×2 / 2×2 三档尺寸下各看一眼
+- 改动 `widget.json` 的字段或规则，请同步更新 [docs/widget-extension.md](docs/widget-extension.md)
+- 新增内置组件，请按 [docs/widget-api.md](docs/widget-api.md) 的三步走，并补一行到市场说明
 
 ## 许可证
 
