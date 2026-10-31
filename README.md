@@ -10,6 +10,15 @@ WidgetNest 是一个常驻托盘的 Windows 桌面小组件面板。按 `Ctrl + 
 
 它不做「全屏仪表盘」那种重活，只解决一件事：**不打断当前工作，一秒钟看到想看的那几个数字。**
 
+## 下载
+
+到 [Releases](https://github.com/Wolf20080128/WidgetNest/releases/latest) 下载：
+
+- **WidgetNest-Setup-x.y.z.exe** —— 安装版，按当前用户安装，不需要管理员权限
+- **WidgetNest-x.y.z-win-x64.zip** —— 免安装版，解压即用
+
+单文件自包含构建，无需预装 .NET 运行时；Windows 10 及以上 x64 可用。安装包未签名，SmartScreen 提示「未知发布者」时选「更多信息 → 仍要运行」。
+
 ---
 
 ## 功能
